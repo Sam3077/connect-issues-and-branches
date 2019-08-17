@@ -1,14 +1,20 @@
 import { Application } from "probot"; // eslint-disable-line no-unused-vars
+import { isNull } from "util";
 
 export = (app: Application) => {
   app.on("create", async context => {
     const payload = context.payload;
+    const config = await context.config("config.yml");
 
     if (!payload.ref_type || payload.ref_type !== "branch") return;
 
     const branchName: string = payload.ref;
-    const issueReference = Number.parseInt(branchName.split("-")[0]);
-    if (isNaN(issueReference)) return;
+    if (!branchName.match(config.branchNameRegex)) return;
+
+    const regexMatch = branchName.match(config.issueReferenceRegex);
+    if (isNull(regexMatch) || regexMatch.length == 0) return;
+
+    const issueReference = Number.parseInt(regexMatch[0]);
 
     try {
       await context.github.issues.createComment({
