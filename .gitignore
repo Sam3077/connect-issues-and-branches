@@ -4,3 +4,4 @@ npm-debug.log
 .env.example
 package-lock.json
 coverage
+.env

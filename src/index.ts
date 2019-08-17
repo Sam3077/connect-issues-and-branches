@@ -1,13 +1,28 @@
-import { Application } from 'probot' // eslint-disable-line no-unused-vars
+import { Application } from "probot"; // eslint-disable-line no-unused-vars
 
 export = (app: Application) => {
-  app.on('issues.opened', async (context) => {
-    const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
-    await context.github.issues.createComment(issueComment)
-  })
-  // For more information on building apps:
-  // https://probot.github.io/docs/
+  app.on("create", async context => {
+    const payload = context.payload;
 
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
-}
+    if (!payload.ref_type || payload.ref_type !== "branch") return;
+
+    const branchName: string = payload.ref;
+    const issueReference = Number.parseInt(branchName.split("-")[0]);
+    if (isNaN(issueReference)) return;
+
+    try {
+      await context.github.issues.createComment({
+        owner: payload.repository.owner.login,
+        repo: payload.repository.name,
+        number: issueReference,
+        body: `A branch has been created for this issue. It can be found at:  ${
+          payload.repository.html_url
+        }/tree/${payload.ref}`
+      });
+
+      context.log("successfully commented on issue");
+    } catch (error) {
+      context.log(error);
+    }
+  });
+};
