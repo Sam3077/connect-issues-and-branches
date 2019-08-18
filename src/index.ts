@@ -5,7 +5,7 @@ export = (app: Application) => {
   app.on("create", async context => {
     const config = await context.config("config.yml");
     const branchNameRegex = new RegExp(
-      config.branchNameRegex || "^[A-Za-z/-_]*[0-9]+[A-Za-z0-9/-_]*$",
+      config.branchNameRegex || "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$",
       "g"
     );
     const issueReferenceRegex = new RegExp(
