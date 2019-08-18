@@ -1,2 +1,0 @@
-branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$"
-issueReferenceRegex: "[0-9]+"
