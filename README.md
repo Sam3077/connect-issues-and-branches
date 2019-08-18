@@ -43,10 +43,6 @@ npm run build
 npm start
 ```
 
-## Configs
-
-There are
-
 ## Contributing
 
 If you have suggestions for how connect-issues-and-branches could be improved, or want to report a bug, open an issue! We'd love all and any contributions.

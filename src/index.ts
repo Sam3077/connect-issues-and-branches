@@ -3,13 +3,12 @@ import { isNull } from "util";
 
 export = (app: Application) => {
   app.on("create", async context => {
-    const config = await context.config("config.yml");
-    const branchNameRegex = new RegExp(
-      config.branchNameRegex || "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$"
-    );
-    const issueReferenceRegex = new RegExp(
-      config.issueReferenceRegex || "[0-9]+"
-    );
+    const config = await context.config("config.yml", {
+      branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$",
+      issueReferenceRegex: "[0-9]+"
+    });
+    const branchNameRegex = new RegExp(config.branchNameRegex);
+    const issueReferenceRegex = new RegExp(config.issueReferenceRegex);
 
     const payload = context.payload;
     if (!payload.ref_type || payload.ref_type !== "branch") return;
@@ -34,7 +33,7 @@ export = (app: Application) => {
         owner: payload.repository.owner.login,
         repo: payload.repository.name,
         number: issueReference,
-        body: `A branch has been created for this issue. It can be found at:  ${
+        body: `A branch has been created for this issue. It can be found at: ${
           payload.repository.html_url
         }/tree/${payload.ref}`
       });
