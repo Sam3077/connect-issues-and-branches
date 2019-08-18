@@ -30,6 +30,10 @@ branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$"
 issueReferenceRegex: "[0-9]+"
 ```
 
+## Installation
+
+You can install directly from [this page](https://github.com/apps/connect-issues-and-branches)
+
 ## Running your own instance
 
 ```sh
