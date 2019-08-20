@@ -24,10 +24,10 @@
     "@octokit/rest": "^16.28.7",
     "@types/nock": "^9.3.0",
     "nock": "^10.0.0",
-    "probot": "^7.2.0"
+    "probot": "^9.3.2"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^24.0.18",
     "@types/node": "^11.9.0",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.0.0",

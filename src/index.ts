@@ -1,12 +1,18 @@
 import { Application } from "probot"; // eslint-disable-line no-unused-vars
 import { isNull } from "util";
+import defaultConfig from "./defaultConfig.json";
+
+type Config = {
+  branchNameRegex: string;
+  issueReferenceRegex: string;
+};
 
 export = (app: Application) => {
   app.on("create", async context => {
-    const config = await context.config("config.yml", {
-      branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$",
-      issueReferenceRegex: "[0-9]+"
-    });
+    let config: Config = (await context.config(
+      "config.yml",
+      defaultConfig
+    )) as Config;
     const branchNameRegex = new RegExp(config.branchNameRegex);
     const issueReferenceRegex = new RegExp(config.issueReferenceRegex);
 
@@ -14,7 +20,6 @@ export = (app: Application) => {
     if (!payload.ref_type || payload.ref_type !== "branch") return;
 
     const branchName: string = payload.ref;
-    context.log(config.branchNameRegex);
     if (branchName.match(branchNameRegex) === null) {
       context.log("doesn't match branch regex");
       return;
@@ -32,13 +37,48 @@ export = (app: Application) => {
       await context.github.issues.createComment({
         owner: payload.repository.owner.login,
         repo: payload.repository.name,
-        number: issueReference,
-        body: `A branch has been created for this issue. It can be found at: ${
+        issue_number: issueReference,
+        body: `A branch named \`${
+          payload.ref
+        }\` has been created for this issue. It can be found at: ${
           payload.repository.html_url
         }/tree/${payload.ref}`
       });
+    } catch (error) {
+      context.log(error);
+    }
+  });
 
-      context.log("successfully commented on issue");
+  app.on("issue_comment.created", async context => {
+    const body: string = context.payload.comment.body.trim().toLowerCase();
+    const keywords = body.split(" ");
+    if (keywords[0] !== "branch") {
+      return;
+    }
+
+    let branchName =
+      context.payload.issue.number +
+      "-" +
+      context.payload.issue.title.toLowerCase().replace(/ /g, "-");
+    if (keywords.length > 1) {
+      branchName = keywords[1];
+    }
+
+    const { repo, owner } = context.repo();
+
+    try {
+      const ref = await context.github.git.getRef({
+        owner,
+        repo,
+        ref: "heads/master"
+      });
+
+      await context.github.git.createRef({
+        owner,
+        repo,
+        sha: ref.data.object.sha,
+        ref: `refs/heads/${branchName}`
+      });
     } catch (error) {
       context.log(error);
     }
