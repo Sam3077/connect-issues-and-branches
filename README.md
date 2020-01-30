@@ -19,7 +19,7 @@
 ## Configuration
 
 _Note that you do not need to create a config file. If one is not created, it is assumed that your branch names follow the format: `optional-string/#-branch-name` where # is the issue number the branch is created for._
-If you want to create a custom branch name pattern for this bot, you must add a `.github/config.yml` as shown below:
+If you want to create a custom branch name pattern for this bot, you must add a `.github/cib-config.yml` as shown below:
 
 ```yaml
 # Change this value to define a custom branch name pattern that will activate this bot.
@@ -27,7 +27,7 @@ branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$"
 
 # Change this value to define how to extract the issue number from a branch name.
 # Note that the first part of the string that matches this pattern will be used as the issue number.
-issueReferenceRegex: "[0-9]+"
+issueReferenceRegex: "(?<=\/)[0-9]+"
 ```
 
 ## Installation

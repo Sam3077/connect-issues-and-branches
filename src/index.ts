@@ -3,9 +3,9 @@ import { isNull } from "util";
 
 export = (app: Application) => {
   app.on("create", async context => {
-    const config = await context.config("config.yml", {
+    const config = await context.config("cib-config.yml", {
       branchNameRegex: "^[A-Za-z/_-]*[0-9]+[A-Za-z0-9/_-]*$",
-      issueReferenceRegex: "[0-9]+"
+      issueReferenceRegex: "(?<=\/)[0-9]+"
     });
     const branchNameRegex = new RegExp(config.branchNameRegex);
     const issueReferenceRegex = new RegExp(config.issueReferenceRegex);
